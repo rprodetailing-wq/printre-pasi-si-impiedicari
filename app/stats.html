@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracking Dossier · Contact Sheet Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-obsidian: #0b0908;
+        --panel-dark: #151210;
+        --panel-border: #2c251f;
+        --baryta: #ede4d3;
+        --baryta-dim: #b8ac99;
+        --kodak-yellow: #f2c94c;
+        --kodak-amber: #df8d35;
+        --china-red: #c83e37;
+        --green-ok: #5ec27e;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: radial-gradient(circle at 50% 0%, #1d1612 0%, var(--bg-obsidian) 65%);
+        color: var(--baryta);
+        font-family: "EB Garamond", Georgia, serif;
+        min-height: 100vh;
+        padding: 28px 18px 64px;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 14px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--panel-border);
+      }
+      .eyebrow {
+        font-family: "Courier Prime", monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--kodak-amber);
+      }
+      h1 {
+        font-family: "Instrument Serif", serif;
+        font-weight: 400;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        color: var(--baryta);
+        line-height: 1.05;
+        margin-top: 4px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        font-family: "Courier Prime", monospace;
+        font-size: 12px;
+      }
+      .toggle-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 11px;
+        border: 1px solid var(--panel-border);
+        background: var(--panel-dark);
+        border-radius: 3px;
+        cursor: pointer;
+        color: var(--baryta-dim);
+        user-select: none;
+      }
+      .toggle-chip input {
+        accent-color: var(--china-red);
+      }
+      .btn-refresh {
+        padding: 7px 14px;
+        border: 1px solid rgba(242, 201, 76, 0.45);
+        background: rgba(242, 201, 76, 0.08);
+        color: var(--kodak-yellow);
+        font-family: "Courier Prime", monospace;
+        font-size: 12px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .btn-refresh:hover {
+        background: rgba(242, 201, 76, 0.16);
+      }
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+        gap: 12px;
+      }
+      .kpi-card {
+        background: var(--panel-dark);
+        border: 1px solid var(--panel-border);
+        padding: 14px 16px;
+        border-radius: 3px;
+      }
+      .kpi-label {
+        font-family: "Courier Prime", monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--baryta-dim);
+      }
+      .kpi-val {
+        font-family: "Instrument Serif", serif;
+        font-size: 2rem;
+        color: var(--kodak-yellow);
+        margin-top: 4px;
+        line-height: 1.1;
+      }
+      .kpi-sub {
+        font-family: "Courier Prime", monospace;
+        font-size: 11px;
+        color: var(--baryta-dim);
+        margin-top: 4px;
+      }
+      .device-card {
+        background: linear-gradient(180deg, #171411 0%, #110e0c 100%);
+        border: 1px solid #332a22;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.65);
+      }
+      .device-header {
+        padding: 16px 20px;
+        background: #1d1814;
+        border-bottom: 1px solid #332a22;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .device-title {
+        font-family: "Instrument Serif", serif;
+        font-size: 1.65rem;
+        color: var(--baryta);
+      }
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-family: "Courier Prime", monospace;
+        font-size: 11px;
+        padding: 4px 9px;
+        border-radius: 2px;
+        border: 1px solid #3a3027;
+        background: #120f0d;
+        color: var(--baryta-dim);
+      }
+      .badge.loc {
+        border-color: rgba(242, 201, 76, 0.45);
+        color: var(--kodak-yellow);
+      }
+      .badge.signed {
+        border-color: rgba(94, 194, 126, 0.55);
+        color: var(--green-ok);
+      }
+      .badge.protest {
+        border-color: rgba(200, 62, 55, 0.65);
+        color: #f07b75;
+      }
+      .badge.preview {
+        border-color: rgba(223, 141, 53, 0.45);
+        color: var(--kodak-amber);
+      }
+      .session-block {
+        padding: 18px 20px;
+        border-top: 1px dashed #2b231c;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .session-block:first-of-type {
+        border-top: none;
+      }
+      .facts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 10px;
+      }
+      .fact-box {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid #28211b;
+        padding: 10px 12px;
+        border-radius: 3px;
+      }
+      .fact-k {
+        font-family: "Courier Prime", monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--baryta-dim);
+      }
+      .fact-v {
+        font-family: "Courier Prime", monospace;
+        font-size: 12.5px;
+        color: var(--baryta);
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+      .clicks-panel {
+        background: #f2eadb;
+        color: #1d1814;
+        padding: 14px 16px;
+        border-radius: 3px;
+        border: 1px solid #d5c7b2;
+        font-family: "Courier Prime", monospace;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .clicks-panel h4 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #8a2923;
+      }
+      .pill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .clause-pill {
+        padding: 3px 8px;
+        border-radius: 2px;
+        border: 1px solid rgba(29, 24, 20, 0.28);
+        background: rgba(255, 255, 255, 0.55);
+        font-size: 11.5px;
+      }
+      .clause-pill.active {
+        border-color: #c83e37;
+        background: rgba(200, 62, 55, 0.12);
+        color: #7c1d18;
+        font-weight: 700;
+      }
+      .timeline {
+        border-left: 2px solid #332a22;
+        margin-left: 8px;
+        padding-left: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .tl-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px 12px;
+        font-family: "Courier Prime", monospace;
+        font-size: 12px;
+        position: relative;
+      }
+      .tl-row::before {
+        content: "";
+        position: absolute;
+        left: -19px;
+        top: 6px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--kodak-amber);
+      }
+      .tl-row.highlight::before {
+        background: var(--china-red);
+      }
+      .tl-time {
+        color: var(--kodak-yellow);
+        min-width: 82px;
+      }
+      .tl-ev {
+        color: var(--baryta);
+      }
+      .tl-dur {
+        color: var(--baryta-dim);
+        font-size: 11px;
+      }
+      .empty-state {
+        padding: 40px 24px;
+        text-align: center;
+        border: 1px dashed var(--panel-border);
+        background: var(--panel-dark);
+        font-size: 18px;
+        color: var(--baryta-dim);
+      }
+      details summary {
+        cursor: pointer;
+        font-family: "Courier Prime", monospace;
+        font-size: 12px;
+        color: var(--kodak-yellow);
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">KODAK 400TX · TELEMETRY &amp; MULTI-DEVICE LOG</div>
+          <h1>Visitor Tracking Dossier</h1>
+        </div>
+        <div class="controls">
+          <label class="toggle-chip">
+            <input type="checkbox" id="showPreviewToggle" checked />
+            <span>Show ?preview=1 visits</span>
+          </label>
+          <label class="toggle-chip">
+            <input type="checkbox" id="showLegacyToggle" />
+            <span>Include older v1 dev logs</span>
+          </label>
+          <label class="toggle-chip">
+            <input type="checkbox" id="autoRefreshToggle" checked />
+            <span>Live auto-refresh (5s)</span>
+          </label>
+          <button type="button" class="btn-refresh" id="refreshNowBtn">Refresh Now</button>
+        </div>
+      </header>
+
+      <section class="kpi-grid" id="kpiGrid"></section>
+      <section id="devicesContainer" style="display: flex; flex-direction: column; gap: 18px;"></section>
+    </div>
+
+    <script>
+      (function () {
+        const SYNTHETIC_PREFIXES = [
+          "scenario",
+          "e2e_verify",
+          "combo_test",
+          "oversized_test",
+          "adv_",
+          "test_",
+        ];
+
+        const kpiGrid = document.getElementById("kpiGrid");
+        const devicesContainer = document.getElementById("devicesContainer");
+        const showPreviewToggle = document.getElementById("showPreviewToggle");
+        const showLegacyToggle = document.getElementById("showLegacyToggle");
+        const autoRefreshToggle = document.getElementById("autoRefreshToggle");
+        const refreshNowBtn = document.getElementById("refreshNowBtn");
+
+        function esc(str) {
+          if (str === null || str === undefined) return "";
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function isSynthetic(ev) {
+          const sid = String((ev && ev.sessionId) || "").trim();
+          if (!sid) return true;
+          const lower = sid.toLowerCase();
+          if (lower === "test") return true;
+          return SYNTHETIC_PREFIXES.some((p) => lower.startsWith(p));
+        }
+
+        function fmtDuration(ms) {
+          const n = Math.max(0, Math.round(Number(ms || 0) / 1000));
+          if (n < 60) return n + "s";
+          const m = Math.floor(n / 60);
+          const s = n % 60;
+          return m + "m " + (s < 10 ? "0" + s : s) + "s";
+        }
+
+        function fmtTs(iso) {
+          if (!iso) return "—";
+          const d = new Date(iso);
+          if (isNaN(d.getTime())) return String(iso);
+          return d.toLocaleString(undefined, {
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          });
+        }
+
+        function fmtTimeOnly(iso) {
+          if (!iso) return "—";
+          const d = new Date(iso);
+          if (isNaN(d.getTime())) return String(iso);
+          return d.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          });
+        }
+
+        function resolveLocationString(events) {
+          let city = "";
+          let region = "";
+          let country = "";
+          let tz = "";
+          let ip = "";
+          events.forEach((e) => {
+            const loc = e.location || {};
+            const srv = (e._server && e._server.geo) || {};
+            if (loc.city) city = loc.city;
+            else if (srv.city && !city) city = srv.city;
+            if (loc.region) region = loc.region;
+            else if (srv.region && !region) region = srv.region;
+            if (loc.country) country = loc.country;
+            else if (srv.country && !country) country = srv.country;
+            if (loc.timezone) tz = loc.timezone;
+            else if (srv.timezone && !tz) tz = srv.timezone;
+            if (loc.ip) ip = loc.ip;
+            else if (e._server && e._server.ip && e._server.ip !== "127.0.0.1") ip = e._server.ip;
+          });
+          const geoParts = [city, region, country].filter(Boolean);
+          const uniqueGeo = geoParts.filter((v, idx) => geoParts.indexOf(v) === idx);
+          const main = uniqueGeo.length ? uniqueGeo.join(", ") : tz || "Local / Unresolved";
+          const extra = uniqueGeo.length && tz ? ` (${tz})` : "";
+          return main + extra + (ip ? ` · ${ip}` : "");
+        }
+
+        function summarizeSession(sid, evs) {
+          evs.sort((a, b) => new Date(a.ts || 0) - new Date(b.ts || 0));
+          const firstEv = evs[0] || {};
+          const lastEv = evs[evs.length - 1] || {};
+          const openedEv = evs.find((e) => e.event === "page_opened") || firstEv;
+          const startBtnEv = evs.find((e) => e.event === "started_journey") || null;
+          const signedEv = [...evs].reverse().find((e) => e.event === "signed_contract") || null;
+          const igEv = evs.find(
+            (e) => e.event === "clicked_instagram_send" || e.event === "clicked_whatsapp_send"
+          );
+
+          let maxActiveMs = 0;
+          let maxElapsedMs = 0;
+          let protestClicks = 0;
+          const protestTimes = [];
+          const act2Unlocked = [];
+          const clauseHistory = [];
+          const currentSelectedTitles = new Set();
+          let customRule = "";
+          const timelineRows = [];
+
+          evs.forEach((e) => {
+            const d = e.data || {};
+            if (typeof e.activeTimeMs === "number" && e.activeTimeMs > maxActiveMs) {
+              maxActiveMs = e.activeTimeMs;
+            }
+            if (typeof e.elapsedMs === "number" && e.elapsedMs > maxElapsedMs) {
+              maxElapsedMs = e.elapsedMs;
+            }
+
+            if (e.event === "clicked_hate_video_calls") {
+              protestClicks = Math.max(protestClicks + 1, Number(d.protestCount || 0));
+              protestTimes.push(fmtTimeOnly(e.ts));
+            }
+            if (e.event === "unlocked_observation") {
+              act2Unlocked.push(d.cardTitle || d.cardId || "Frame");
+            }
+            if (e.event === "toggled_clause") {
+              const title = d.clauseTitle || d.clauseId || "Clause";
+              if (d.checked) currentSelectedTitles.add(title);
+              else currentSelectedTitles.delete(title);
+              clauseHistory.push(
+                `${fmtTimeOnly(e.ts)} — ${d.checked ? "☑ Checked" : "☐ Unchecked"} "${title}"`
+              );
+            }
+            if (e.event === "custom_rule_typed" && d.customNote) {
+              customRule = d.customNote;
+            }
+            if (e.event === "signed_contract") {
+              if (d.customNote) customRule = d.customNote;
+              if (typeof d.protestCount === "number") {
+                protestClicks = Math.max(protestClicks, d.protestCount);
+              }
+              if (Array.isArray(d.clauseTitles) && d.clauseTitles.length) {
+                currentSelectedTitles.clear();
+                d.clauseTitles.forEach((t) => currentSelectedTitles.add(t));
+              } else if (Array.isArray(d.clauses)) {
+                currentSelectedTitles.clear();
+                d.clauses.forEach((t) => currentSelectedTitles.add(t));
+              }
+            }
+
+            // Build human-readable timeline entries (skip background heartbeats for clean reading)
+            if (e.event === "time_heartbeat" || e.event === "location_resolved") return;
+
+            let desc = e.event;
+            let highlight = false;
+            let durNote = "";
+
+            if (e.event === "page_opened") {
+              desc = "Opened the link (Gate 0)";
+            } else if (e.event === "started_journey") {
+              highlight = true;
+              const hes = d.hesitationMs ? ` (after ${fmtDuration(d.hesitationMs)})` : "";
+              desc = `Pressed first button "Începe"${hes}`;
+            } else if (e.event === "step_viewed") {
+              desc = `Viewed: ${d.stepLabel || d.stepKey || "Slide #" + d.slideIdx}`;
+              if (d.prevStepDurationMs && d.prevStepDurationMs > 250) {
+                durNote = `spent ${fmtDuration(d.prevStepDurationMs)} on previous step`;
+              }
+            } else if (e.event === "istanbul_reveal_reached") {
+              desc = "Reached Istanbul 35mm morph + Gripin soundtrack drop";
+            } else if (e.event === "unlocked_observation") {
+              highlight = true;
+              desc = `Circled Act 2 photo: "${d.cardTitle || d.cardId}" (${d.unlockedCount || "?"}/4)`;
+            } else if (e.event === "inspected_observation") {
+              desc = `Re-opened Act 2 photo: "${d.cardTitle || d.cardId}"`;
+            } else if (e.event === "completed_act_1") {
+              desc = 'Clicked "Continuă" at end of Act 1';
+            } else if (e.event === "completed_act_2") {
+              desc = 'Clicked "Continuă" at end of Act 2';
+            } else if (e.event === "completed_act_3") {
+              desc = 'Clicked "Continuă" at end of Act 3';
+            } else if (e.event === "revealed_nightmare") {
+              highlight = true;
+              desc = 'Clicked "Propunerea" -> revealed "Scena următoare" (FaceTime)';
+            } else if (e.event === "opened_terms") {
+              desc = 'Clicked "Vezi Termenii și Condițiile"';
+            } else if (e.event === "toggled_clause") {
+              highlight = true;
+              desc = `${d.checked ? "☑ Checked" : "☐ Unchecked"} T&C clause: "${
+                d.clauseTitle || d.clauseId
+              }"`;
+            } else if (e.event === "custom_rule_typed") {
+              highlight = true;
+              desc = `Typed custom rule: "${d.customNote}"`;
+            } else if (e.event === "clicked_hate_video_calls") {
+              highlight = true;
+              desc = `Clicked "No" ("Urăsc literalmente apelurile video") — #${
+                d.protestCount || 1
+              }`;
+            } else if (e.event === "signed_contract") {
+              highlight = true;
+              desc = `SIGNED THE TREATY (${(d.clauses || []).length} clause(s))`;
+            } else if (
+              e.event === "clicked_instagram_send" ||
+              e.event === "clicked_whatsapp_send"
+            ) {
+              highlight = true;
+              desc = 'Clicked "Trimite Verdictul pe Instagram"';
+            } else if (e.event === "toggled_sound") {
+              desc = d.muted ? "Muted audio" : "Unmuted audio";
+            } else if (e.event === "session_hidden") {
+              desc = `Switched app / locked screen (active time: ${fmtDuration(e.activeTimeMs)})`;
+            } else if (e.event === "page_closed") {
+              desc = `Closed tab (total active time: ${fmtDuration(e.activeTimeMs)})`;
+            }
+
+            timelineRows.push({
+              ts: e.ts,
+              desc,
+              durNote,
+              highlight,
+            });
+          });
+
+          // Fallback wall time if legacy v1 session didn't emit activeTimeMs
+          const wallSpanMs = Math.max(
+            maxElapsedMs,
+            new Date(lastEv.ts || 0) - new Date(firstEv.ts || 0)
+          );
+          const effectiveTimeMs = maxActiveMs > 0 ? maxActiveMs : wallSpanMs;
+
+          return {
+            sid,
+            isPreview: evs.some((e) => e.isPreview === true),
+            openedAt: openedEv.ts,
+            firstButtonAt: startBtnEv ? startBtnEv.ts : null,
+            hesitationMs:
+              startBtnEv && startBtnEv.data ? startBtnEv.data.hesitationMs : null,
+            lastEventAt: lastEv.ts,
+            lastStepLabel:
+              lastEv.stepLabel ||
+              (lastEv.data && lastEv.data.stepLabel) ||
+              lastEv.event ||
+              "—",
+            activeTimeMs: effectiveTimeMs,
+            wallSpanMs,
+            protestClicks,
+            protestTimes,
+            act2Unlocked,
+            clauseHistory,
+            selectedClauses: Array.from(currentSelectedTitles),
+            signedClauses: signedEv && signedEv.data ? signedEv.data.clauses || [] : null,
+            customRule,
+            signed: !!signedEv,
+            sentInstagram: !!igEv,
+            timelineRows,
+          };
+        }
+
+        function renderDashboard(rawEvents) {
+          const includePreview = showPreviewToggle.checked;
+          const includeLegacy = showLegacyToggle.checked;
+          const hasV2 = rawEvents.some((e) => !isSynthetic(e) && e.schemaVersion === 2);
+          const cleanEvents = rawEvents.filter((ev) => {
+            if (isSynthetic(ev)) return false;
+            if (!includeLegacy && hasV2 && ev.schemaVersion !== 2) return false;
+            if (!includePreview && ev.isPreview === true) return false;
+            return true;
+          });
+
+          if (!cleanEvents.length) {
+            kpiGrid.innerHTML = "";
+            devicesContainer.innerHTML = `
+              <div class="empty-state">
+                No visitor events match the current filter yet.<br />
+                <span style="font-size: 14px; font-family: 'Courier Prime', monospace;">
+                  Open <a href="/" style="color: var(--kodak-yellow);">/</a> on a phone or browser to see live tracking appear here automatically.
+                </span>
+              </div>
+            `;
+            return;
+          }
+
+          // Group by deviceId (fallback to sessionId for older v1 sessions)
+          const deviceMap = new Map();
+          cleanEvents.forEach((ev) => {
+            const did = ev.deviceId || `legacy_${ev.sessionId}`;
+            if (!deviceMap.has(did)) {
+              deviceMap.set(did, []);
+            }
+            deviceMap.get(did).push(ev);
+          });
+
+          const devices = [];
+          deviceMap.forEach((devEvents, did) => {
+            devEvents.sort((a, b) => new Date(a.ts || 0) - new Date(b.ts || 0));
+            const latestWithDev =
+              [...devEvents].reverse().find((e) => e.device && e.device.label) || {};
+            const devInfo = latestWithDev.device || {};
+
+            const sessionMap = new Map();
+            devEvents.forEach((e) => {
+              const sid = e.sessionId || "default";
+              if (!sessionMap.has(sid)) sessionMap.set(sid, []);
+              sessionMap.get(sid).push(e);
+            });
+
+            const sessions = [];
+            sessionMap.forEach((sEvs, sid) => {
+              sessions.push(summarizeSession(sid, sEvs));
+            });
+            sessions.sort((a, b) => new Date(b.lastEventAt || 0) - new Date(a.lastEventAt || 0));
+
+            const totalActiveMs = sessions.reduce((acc, s) => acc + (s.activeTimeMs || 0), 0);
+            const totalProtests = sessions.reduce((acc, s) => acc + (s.protestClicks || 0), 0);
+            const anySigned = sessions.some((s) => s.signed);
+            const anyIg = sessions.some((s) => s.sentInstagram);
+
+            devices.push({
+              did,
+              label: devInfo.label || "Visitor Device (Legacy Log)",
+              screen: devInfo.screen || "",
+              language: devInfo.language || "",
+              referrer: devInfo.referrer || "",
+              locationStr: resolveLocationString(devEvents),
+              lastActiveAt: sessions[0] ? sessions[0].lastEventAt : null,
+              totalActiveMs,
+              totalProtests,
+              anySigned,
+              anyIg,
+              sessions,
+            });
+          });
+
+          devices.sort((a, b) => new Date(b.lastActiveAt || 0) - new Date(a.lastActiveAt || 0));
+
+          const allSessions = devices.flatMap((d) => d.sessions);
+          const totalActiveAll = devices.reduce((a, d) => a + d.totalActiveMs, 0);
+          const totalProtestsAll = devices.reduce((a, d) => a + d.totalProtests, 0);
+          const signedCount = allSessions.filter((s) => s.signed).length;
+          const startedCount = allSessions.filter((s) => s.firstButtonAt).length;
+
+          kpiGrid.innerHTML = `
+            <div class="kpi-card">
+              <div class="kpi-label">Unique Devices</div>
+              <div class="kpi-val">${devices.length}</div>
+              <div class="kpi-sub">${allSessions.length} session(s) total</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Pressed "Începe"</div>
+              <div class="kpi-val">${startedCount} / ${allSessions.length}</div>
+              <div class="kpi-sub">First button conversions</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Total Active Time</div>
+              <div class="kpi-val">${fmtDuration(totalActiveAll)}</div>
+              <div class="kpi-sub">Visible screen time</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">"No" / Protest Clicks</div>
+              <div class="kpi-val">${totalProtestsAll}</div>
+              <div class="kpi-sub">"Urăsc apelurile video"</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Treaties Signed</div>
+              <div class="kpi-val">${signedCount}</div>
+              <div class="kpi-sub">${
+                devices.some((d) => d.anyIg) ? "Instagram DM clicked ✓" : "Awaiting DM handoff"
+              }</div>
+            </div>
+          `;
+
+          devicesContainer.innerHTML = devices
+            .map((dev, dIdx) => {
+              const sessionsHtml = dev.sessions
+                .map((s, sIdx) => {
+                  const clausesDisplay =
+                    s.signedClauses && s.signedClauses.length
+                      ? s.signedClauses
+                      : s.selectedClauses;
+
+                  const clausesHtml = clausesDisplay.length
+                    ? `<div class="pill-list">${clausesDisplay
+                        .map((c) => `<span class="clause-pill active">✓ ${esc(c)}</span>`)
+                        .join("")}</div>`
+                    : `<span style="color:#6e6256;">None clicked yet</span>`;
+
+                  const historyHtml = s.clauseHistory.length
+                    ? `<div style="margin-top:4px; color:#5a4f43; font-size:11px;">Checkbox click log: ${s.clauseHistory
+                        .map(esc)
+                        .join(" · ")}</div>`
+                    : "";
+
+                  const customRuleHtml = s.customRule
+                    ? `<div style="margin-top:4px;"><strong>Custom rule typed:</strong> "${esc(
+                        s.customRule
+                      )}"</div>`
+                    : "";
+
+                  const act2Html = s.act2Unlocked.length
+                    ? s.act2Unlocked.map((t, i) => `${i + 1}. ${esc(t)}`).join(" → ")
+                    : "None circled yet";
+
+                  return `
+                    <div class="session-block">
+                      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; align-items:center;">
+                        <span style="font-family:'Courier Prime',monospace; font-size:12px; color:var(--kodak-amber);">
+                          Session ${dev.sessions.length - sIdx} · <code>${esc(s.sid)}</code>
+                          ${s.isPreview ? '<span class="badge preview" style="margin-left:6px;">?preview=1</span>' : ""}
+                        </span>
+                        <span style="font-family:'Courier Prime',monospace; font-size:12px; color:var(--baryta-dim);">
+                          Latest step: <strong style="color:var(--baryta);">${esc(s.lastStepLabel)}</strong>
+                        </span>
+                      </div>
+
+                      <div class="facts-grid">
+                        <div class="fact-box">
+                          <div class="fact-k">1. Opened Quiz / Link</div>
+                          <div class="fact-v">${esc(fmtTs(s.openedAt))}</div>
+                        </div>
+                        <div class="fact-box">
+                          <div class="fact-k">2. Pressed First Button ("Începe")</div>
+                          <div class="fact-v">
+                            ${
+                              s.firstButtonAt
+                                ? `${esc(fmtTs(s.firstButtonAt))}${
+                                    s.hesitationMs !== null && s.hesitationMs !== undefined
+                                      ? ` <span style="color:var(--kodak-yellow);">(${fmtDuration(
+                                          s.hesitationMs
+                                        )} after open)</span>`
+                                      : ""
+                                  }`
+                                : '<span style="color:#8e8173;">Not pressed yet</span>'
+                            }
+                          </div>
+                        </div>
+                        <div class="fact-box">
+                          <div class="fact-k">3. Time Spent</div>
+                          <div class="fact-v">
+                            <strong style="color:var(--kodak-yellow);">${fmtDuration(
+                              s.activeTimeMs
+                            )}</strong> active
+                            <span style="color:var(--baryta-dim);">(${fmtDuration(
+                              s.wallSpanMs
+                            )} total span)</span>
+                          </div>
+                        </div>
+                        <div class="fact-box">
+                          <div class="fact-k">4. "No" Button Clicks (Hate Video Calls)</div>
+                          <div class="fact-v">
+                            <strong style="color:${
+                              s.protestClicks > 0 ? "#f07b75" : "var(--baryta)"
+                            };">${s.protestClicks}x</strong>
+                            ${
+                              s.protestTimes.length
+                                ? `<span style="color:var(--baryta-dim);">at ${esc(
+                                    s.protestTimes.join(", ")
+                                  )}</span>`
+                                : ""
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="clicks-panel">
+                        <h4>What Was Clicked (Terms &amp; Conditions + Contact Sheet)</h4>
+                        <div><strong>Terms &amp; Conditions selected:</strong></div>
+                        ${clausesHtml}
+                        ${historyHtml}
+                        ${customRuleHtml}
+                        <div style="margin-top:4px; border-top:1px solid rgba(29,24,20,0.12); padding-top:6px;">
+                          <strong>Act 2 Photos Circled (Order):</strong> ${act2Html}
+                        </div>
+                        <div>
+                          <strong>Final Status:</strong>
+                          ${
+                            s.signed
+                              ? "Treaty Signed ✅"
+                              : "Not signed yet"
+                          }
+                          ${
+                            s.sentInstagram
+                              ? " · Clicked 'Send Verdict on Instagram' 💬"
+                              : ""
+                          }
+                        </div>
+                      </div>
+
+                      <details ${dIdx === 0 && sIdx === 0 ? "open" : ""}>
+                        <summary>Step-by-Step Timestamps (${s.timelineRows.length} events)</summary>
+                        <div class="timeline" style="margin-top:10px;">
+                          ${s.timelineRows
+                            .map(
+                              (r) => `
+                            <div class="tl-row ${r.highlight ? "highlight" : ""}">
+                              <span class="tl-time">${esc(fmtTimeOnly(r.ts))}</span>
+                              <span class="tl-ev">${esc(r.desc)}</span>
+                              ${
+                                r.durNote
+                                  ? `<span class="tl-dur">(${esc(r.durNote)})</span>`
+                                  : ""
+                              }
+                            </div>
+                          `
+                            )
+                            .join("")}
+                        </div>
+                      </details>
+                    </div>
+                  `;
+                })
+                .join("");
+
+              return `
+                <article class="device-card">
+                  <div class="device-header">
+                    <div>
+                      <div class="eyebrow">DEVICE #${dIdx + 1} · ${esc(dev.did)}</div>
+                      <div class="device-title">${esc(dev.label)}</div>
+                      ${
+                        dev.screen || dev.language
+                          ? `<div style="font-family:'Courier Prime',monospace; font-size:11px; color:var(--baryta-dim); margin-top:3px;">
+                              Screen: ${esc(dev.screen || "—")} · Lang: ${esc(dev.language || "—")}
+                              ${dev.referrer ? ` · Referrer: ${esc(dev.referrer)}` : ""}
+                            </div>`
+                          : ""
+                      }
+                    </div>
+                    <div class="badge-row">
+                      <span class="badge loc">📍 ${esc(dev.locationStr)}</span>
+                      <span class="badge">⏱ ${fmtDuration(dev.totalActiveMs)}</span>
+                      ${
+                        dev.totalProtests > 0
+                          ? `<span class="badge protest">🙅 "No" clicked ${dev.totalProtests}x</span>`
+                          : ""
+                      }
+                      ${dev.anySigned ? `<span class="badge signed">✓ Treaty Signed</span>` : ""}
+                    </div>
+                  </div>
+                  ${sessionsHtml}
+                </article>
+              `;
+            })
+            .join("");
+        }
+
+        function fetchAndRender() {
+          fetch("/api/events?real=1", { cache: "no-store" })
+            .then((r) => r.json())
+            .then((data) => {
+              renderDashboard((data && data.events) || []);
+            })
+            .catch((err) => {
+              devicesContainer.innerHTML = `<div class="empty-state">Could not load /api/events: ${esc(
+                err.message
+              )}</div>`;
+            });
+        }
+
+        showPreviewToggle.addEventListener("change", fetchAndRender);
+        showLegacyToggle.addEventListener("change", fetchAndRender);
+        refreshNowBtn.addEventListener("click", fetchAndRender);
+
+        window.setInterval(() => {
+          if (autoRefreshToggle.checked && document.visibilityState === "visible") {
+            fetchAndRender();
+          }
+        }, 5000);
+
+        fetchAndRender();
+      })();
+    </script>
+  </body>
+</html>

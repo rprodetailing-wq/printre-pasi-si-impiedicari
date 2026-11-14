@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#07070a" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Contact Sheet · Istanbul</title>
+
+    <!-- Variation 3A Darkroom Typography: Allura (Fountain & Brush Script) + EB Garamond (Cinema Subtitles) + Instrument Serif + Courier Prime (Baryta Typewriter Contract) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Allura&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/styles.css?v=rotrack16" />
+  </head>
+  <body data-theme="obsidian" data-mood="midnight-amber">
+    <!-- Artisanal Analog SVG Filters: Waxy Red China-Marker Grease Pencil & Rubber Stamp Ink -->
+    <svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="chinaMarkerTexture" x="-12%" y="-12%" width="124%" height="124%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.72"
+            numOctaves="3"
+            seed="11"
+            result="crayonGrain"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="crayonGrain"
+            scale="2.3"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+        <filter id="stampInkDistress" x="-8%" y="-8%" width="116%" height="116%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.95"
+            numOctaves="2"
+            seed="4"
+            result="inkNoise"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="inkNoise"
+            scale="1.4"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Analog Darkroom Safelight & Mood-Shifting Tungsten Wash -->
+    <div class="ambient-bg" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Top-Level Non-Interactive 35mm Darkroom & Projection Overlays (Z-Index 10) -->
+    <div class="cinema-atmosphere projector-flicker" aria-hidden="true">
+      <div class="film-grain"></div>
+      <div class="cinema-warmth-grade"></div>
+      <div class="darkroom-dust"></div>
+      <div class="cinema-vignette"></div>
+    </div>
+
+    <!-- Mobile-First Darkroom Table Frame -->
+    <main class="phone-shell" id="appShell">
+      <!-- Top Reel Progress + Back/Forward Frontier Controls + Soundtrack Toggle -->
+      <header class="top-chrome" id="topChrome" hidden>
+        <div class="chapter-rail" aria-label="Progresul poveștii">
+          <div class="rail-seg" data-seg="1"><span class="rail-fill"></span></div>
+          <div class="rail-seg" data-seg="2"><span class="rail-fill"></span></div>
+          <div class="rail-seg" data-seg="3"><span class="rail-fill"></span></div>
+          <div class="rail-seg" data-seg="4"><span class="rail-fill"></span></div>
+        </div>
+        <div class="chrome-meta">
+          <div class="chrome-nav-cluster" role="group" aria-label="Navigare cadre">
+            <button
+              type="button"
+              class="chrome-step-btn"
+              id="navBackBtn"
+              aria-label="Cadrul anterior"
+              disabled
+            >
+              <span class="step-glyph" aria-hidden="true">‹</span>
+              <span class="step-word">Înapoi</span>
+            </button>
+            <span class="chrome-nav-sep" aria-hidden="true">·</span>
+            <button
+              type="button"
+              class="chrome-step-btn"
+              id="navForwardBtn"
+              aria-label="Cadrul următor"
+              disabled
+            >
+              <span class="step-word">Înainte</span>
+              <span class="step-glyph" aria-hidden="true">›</span>
+            </button>
+          </div>
+          <span class="chapter-code" id="chapterCode">Rola I · Istanbul</span>
+          <div class="chrome-audio-cluster">
+            <span class="soundtrack-tag" id="soundtrackTag" hidden>♪ Var Bir İhtimal</span>
+            <button
+              type="button"
+              class="sound-btn"
+              id="soundToggle"
+              aria-label="Comută coloana sonoră Gripin Var Bir Ihtimal"
+              title="Comută sunetul ambiental &amp; Var Bir İhtimal"
+            >
+              <span class="sound-bars" id="soundBars">
+                <i></i><i></i><i></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Darkroom Stage Container -->
+      <section class="stage" id="stage" aria-live="polite">
+        <noscript>
+          <div class="scene">
+            <div class="prologue-cinema vintage-cinema">
+              <div class="istanbul-stage active">
+                <div class="film-strip-vertical">
+                  <div class="sprocket-rail left" aria-hidden="true">
+                    <span class="edge-code">KODAK 400TX</span>
+                    <span class="edge-num">36</span>
+                    <span class="edge-code">FILM</span>
+                  </div>
+                  <div class="istanbul-cinema-frame">
+                    <div class="istanbul-photo-layer">
+                      <img src="/assets/istiklal_tram.jpg" alt="Tramvaiul istoric de pe İstiklal" class="istanbul-visual" />
+                    </div>
+                    <div class="istanbul-light-leak" aria-hidden="true"></div>
+                    <div class="istanbul-frame-border" aria-hidden="true"></div>
+                  </div>
+                  <div class="sprocket-rail right" aria-hidden="true">
+                    <span class="edge-num">36A</span>
+                    <span class="edge-barcode" aria-hidden="true">⏐⏐⏐⏐</span>
+                    <span class="edge-num">37</span>
+                  </div>
+                </div>
+                <div class="istanbul-meta-overlay">
+                  <h2 class="city-title font-allura script-accent">Printre pași, împiedicări și povești</h2>
+                  <p class="city-location-subtitle">Istanbul</p>
+                  <p class="cinema-caption script-sub font-allura">Activează JavaScript pentru a deschide această proiecție de 35mm.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </noscript>
+      </section>
+
+      <!-- Variation 3A Act 1 Vertical 35mm Strip Blueprint Template -->
+      <template id="act1CinemaTemplate">
+        <div class="scene act1-scene">
+          <div class="prologue-cinema vintage-cinema" id="cinemaBox">
+            <div class="istanbul-stage" id="istanbulStage" data-coords="41.0082° N · 28.9784° E">
+              <div class="film-strip-vertical">
+                <div class="sprocket-rail left" aria-hidden="true">
+                  <span class="edge-code">KODAK 400TX</span>
+                  <span class="edge-num">36</span>
+                  <span class="edge-code">FILM</span>
+                </div>
+                <div class="istanbul-cinema-frame">
+                  <div class="istanbul-photo-layer ken-burns">
+                    <img src="/assets/istiklal_tram.jpg" alt="Tramvaiul istoric de pe İstiklal" class="istanbul-visual" />
+                  </div>
+                  <div class="istanbul-light-leak" aria-hidden="true"></div>
+                  <div class="istanbul-frame-border" aria-hidden="true"></div>
+                </div>
+                <div class="sprocket-rail right" aria-hidden="true">
+                  <span class="edge-num">36A</span>
+                  <span class="edge-barcode" aria-hidden="true">⏐⏐⏐⏐</span>
+                  <span class="edge-num">37</span>
+                </div>
+              </div>
+              <div class="istanbul-meta-overlay">
+                <h2 class="city-title font-allura script-accent">Printre pași, împiedicări și povești</h2>
+                <p class="city-location-subtitle">Istanbul</p>
+                <p class="cinema-caption kodak-subtitle">Mesajele s-au transformat, în sfârșit, în realitate.</p>
+              </div>
+            </div>
+            <div class="morph-flare" id="morphFlare" aria-hidden="true"></div>
+            <div class="pivot-msg-stage" id="pivotMsgStage"></div>
+            <div class="msg-stream" id="msgStream"></div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Optional Creator Preview Bar (ONLY rendered if ?preview=1 in URL) -->
+      <nav class="creator-bar" id="creatorBar" hidden>
+        <span class="creator-tag">Role</span>
+        <button type="button" data-jump="0">Intro</button>
+        <button type="button" data-jump="1">Act 1</button>
+        <button type="button" data-jump="2">Act 2</button>
+        <button type="button" data-jump="3">Act 3</button>
+        <button type="button" data-jump="4">Act 4</button>
+      </nav>
+    </main>
+
+    <script src="/storyConfig.js?v=rotrack16"></script>
+    <script src="/app.js?v=rotrack16"></script>
+  </body>
+</html>
