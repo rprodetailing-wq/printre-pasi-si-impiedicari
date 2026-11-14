@@ -2819,6 +2819,47 @@ body {
   color: var(--ink-muted);
 }
 
+.treaty-confirmed-banner {
+  margin-top: 2px;
+  padding: 13px 16px;
+  border-top: 1px dashed rgba(29, 24, 20, 0.22);
+  border-bottom: 1px dashed rgba(29, 24, 20, 0.22);
+  background: rgba(200, 62, 55, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  animation: fadeRiseIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.treaty-confirmed-banner[hidden],
+.receipt-card .primary-btn[hidden] {
+  display: none !important;
+}
+
+.treaty-confirmed-check {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.treaty-confirmed-check svg {
+  width: 100%;
+  height: 100%;
+}
+
+.treaty-confirmed-text {
+  font-family: var(--font-serif);
+  font-size: 16.5px;
+  font-weight: 500;
+  color: var(--ink-dark);
+  letter-spacing: 0.01em;
+}
+
 /* ==========================================================================
    CREATOR PREVIEW BAR (ONLY WHEN ?preview=1)
    ========================================================================== */

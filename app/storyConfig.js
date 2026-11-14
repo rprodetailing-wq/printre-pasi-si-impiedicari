@@ -112,12 +112,11 @@ const act4Finale = {
   stamp: "APROBAT SUB PROTEST 🦭",
   title: "S-a bătut palma.",
   signedTitle: "S-a bătut palma.",
-  subtitle:
-    "Fă un screenshot la dovadă dacă ai nevoie de acoperire legală, sau apasă mai jos ca să-mi trimiți verdictul oficial pe Instagram :))",
-  signedBody:
-    "Fă un screenshot la dovadă dacă ai nevoie de acoperire legală, sau apasă mai jos ca să-mi trimiți verdictul oficial pe Instagram :))",
-  instagramButton: "Trimite Verdictul pe Instagram",
-  whatsappButton: "Trimite Verdictul pe Instagram",
+  subtitle: "Fă un screenshot la dovadă dacă ai nevoie de acoperire legală :))",
+  signedBody: "Fă un screenshot la dovadă dacă ai nevoie de acoperire legală :))",
+  instagramButton: "Accept termenii și condițiile",
+  whatsappButton: "Accept termenii și condițiile",
+  confirmationMessage: "Super. Te aștept pe Instagram 🦭",
   buildVerdictMessage: buildVerdictMessageFn,
   buildWhatsappMessage: buildVerdictMessageFn,
 };
@@ -151,7 +150,7 @@ const act4ProposalConfig = {
     protestButton: "Urăsc literalmente apelurile video",
     protestExhaustedButton: "Bine, gata, am rămas fără scuze",
     protestResponses: protestResponseList,
-    signButton: "Acceptă Termenii și Semnează Tratatul",
+    signButton: "Semnează Tratatul",
   },
 
   clauses: contractClauses,
@@ -161,13 +160,13 @@ const act4ProposalConfig = {
 
   instagram: {
     username: metaConfig.instagramUsername,
-    text: "Trimite Verdictul pe Instagram",
-    buttonLabel: "Trimite Verdictul pe Instagram",
+    text: "Accept termenii și condițiile",
+    buttonLabel: "Accept termenii și condițiile",
   },
   whatsApp: {
     phone: "",
-    text: "Trimite Verdictul pe Instagram",
-    buttonLabel: "Trimite Verdictul pe Instagram",
+    text: "Accept termenii și condițiile",
+    buttonLabel: "Accept termenii și condițiile",
   },
 };
 

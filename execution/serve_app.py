@@ -337,7 +337,7 @@ class JourneyHandler(SimpleHTTPRequestHandler):
                     "whatsapp_opened",
                 ):
                     send_telegram_alert(
-                        f"💬 Clicked 'Trimite Verdictul pe Instagram'!\n({visitor_tag} · {active_sec}s)"
+                        f"💬 Clicked 'Accept termenii și condițiile'!\n({visitor_tag} · {active_sec}s)"
                     )
 
             resp = b'{"ok":true}'

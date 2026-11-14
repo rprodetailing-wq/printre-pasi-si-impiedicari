@@ -1139,6 +1139,7 @@
     contractCustomNote: "",
     contractProtestCount: 0,
     signedPayload: null,
+    acceptedFinalTerms: false,
   };
 
   function extractNavOpts(arg) {
@@ -3070,12 +3071,9 @@
       customNote,
       protestCount
     );
-    const cleanIg = ((CFG.meta && CFG.meta.instagramUsername) || "")
-      .replace(/^@+/, "")
-      .replace(/[^a-zA-Z0-9._]/g, "");
-    const igUrl = cleanIg
-      ? `https://ig.me/m/${cleanIg}`
-      : `https://www.instagram.com/direct/inbox/`;
+    const confirmText = escapeHtml(
+      fin.confirmationMessage || "Super. Te aștept pe Instagram 🦭"
+    );
 
     const scene = document.createElement("div");
     scene.className = "scene";
@@ -3091,6 +3089,7 @@
       .join("");
 
     const launchBtnLabel = fin.instagramButton || fin.whatsappButton;
+    const alreadyAccepted = !!persisted.acceptedFinalTerms;
 
     scene.innerHTML = `
       <div class="receipt-card">
@@ -3104,39 +3103,43 @@
             ${chinaMarkerSignatureSvg()}
           </div>
         </div>
-        <a
-          href="${igUrl}"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
           class="primary-btn whatsapp-cta instagram-cta"
           id="waLaunchBtn"
-          style="text-decoration: none;"
+          ${alreadyAccepted ? "hidden disabled" : ""}
         >
           <span>${launchBtnLabel}</span>
           ${chinaMarkerArrowSvg()}
-        </a>
-        <p class="copy-fallback-msg" id="igCopyHint">Deschide Instagram și copiază automat termenii semnați pentru DM.</p>
+        </button>
+        <div
+          class="treaty-confirmed-banner"
+          id="igConfirmationMsg"
+          role="status"
+          aria-live="polite"
+          ${alreadyAccepted ? "" : "hidden"}
+        >
+          <span class="treaty-confirmed-check" aria-hidden="true">${chinaMarkerCheckSvg()}</span>
+          <span class="treaty-confirmed-text">${confirmText}</span>
+        </div>
       </div>
     `;
 
     stage.appendChild(scene);
 
     const waLaunchBtn = document.getElementById("waLaunchBtn");
-    const igCopyHint = document.getElementById("igCopyHint");
+    const igConfirmationMsg = document.getElementById("igConfirmationMsg");
     if (waLaunchBtn) {
       waLaunchBtn.addEventListener("click", () => {
-        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-          navigator.clipboard
-            .writeText(verdictMessage)
-            .then(() => {
-              if (igCopyHint) {
-                igCopyHint.textContent =
-                  "Verdictul a fost copiat, dă Paste în DM pe Instagram :))";
-              }
-            })
-            .catch(() => {});
+        if (waLaunchBtn.disabled) return;
+        waLaunchBtn.disabled = true;
+        waLaunchBtn.hidden = true;
+        persisted.acceptedFinalTerms = true;
+        Sound.playGreasePencil();
+        if (igConfirmationMsg) {
+          igConfirmationMsg.hidden = false;
         }
-        trackEvent("clicked_instagram_send", { hasDirectUsername: !!cleanIg });
+        trackEvent("clicked_instagram_send", { acceptedTerms: true });
       });
     }
   }
